@@ -1,0 +1,293 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Paze</title>
+     
+     <style>
+         html, body { margin: 0; padding: 0; }
+         
+         body 
+         { 
+             background: black;
+             overflow: hidden;
+             cursor: none;
+         }
+        
+         #mainDiv
+         {
+             width: 500px;
+             height: 500px;
+             margin: 200px auto;
+             perspective: 800px;
+         }
+         
+         #boxDiv
+         {
+             width: 500px;
+             height: 500px; 
+             transform-style: preserve-3d;
+             transform: translateZ(600px);
+             
+         }
+         
+         #boxDiv div 
+         {
+             position: absolute;
+             width: 500px;
+             height: 500px; 
+         }
+         
+         #front
+         {
+             transform: translateZ(250px) rotateY(180deg);
+         }
+         
+         #back
+         {
+             transform: translateZ(-250px);
+         }
+         
+         #left
+         {
+             transform: rotateY(90deg) translateX(-250px);
+             transform-origin: left;
+         }
+         
+         #right
+         {
+             transform: rotateY(-90deg) translateX(250px);
+             transform-origin: right;
+         }
+         
+         #top
+         {
+             transform: rotateX(-90deg) translateY(-250px);
+             transform-origin: top;
+         }
+         
+         #bottom
+         {
+             transform: rotateX(90deg) translateY(250px);
+             transform-origin: bottom;
+         }
+         
+         img
+         {
+             width: 500px;
+             height: 500px;
+         }
+         
+         #pauseMenu
+       {
+           position: fixed;
+           top: 0;
+           left: 0;
+           width: 100%;
+           height: 100%;
+           opacity: 0.6;
+           background: black;
+           visibility: hidden;
+       }
+       
+       #resumeButton, #settingsButton, #settng1, #settng2, #worldsButton, #world1, #worldsButton, #mainMenu
+       {
+           position: fixed;
+           top: 50%;
+           left: 50%;
+           transform: translate(-50%, -50%);
+           font: 30px existence;
+           color: white;
+           text-align: center;
+           opacity: 0.5;
+          visibility: hidden;
+       }
+       
+       #resumeButton { top: 30%; }
+       #settingsButton { top: 45%; }
+       #settng1 { top: 40%; }
+       #settng2 { top: 60%; }
+       #worldsButton { top: 60%; }
+       #world1 { top: 35%; font: 22px existence; }
+       #directions { top: 20%; visibility: visible; color: gray; font: 10px; }
+       #mainMenu { top: 75%; }
+       
+       #goBackButton
+       {
+           position: fixed;
+           left: 50px;
+           top: 50px;
+           transform: translateY(-50%); 
+           font: 30px existence;
+           color: white;
+           text-align: center;
+           opacity: 0.5;
+           visibility: hidden;
+       }
+       
+      #resumeButton:hover, #settingsButton:hover, #settng1:hover, #settng2:hover, #goBackButton:hover, #world1:hover, #worldsButton:hover, #mainMenu:hover { opacity: 1; }
+       
+       a {
+           color: white;
+       }
+       
+       a:hover {
+           color: blue;
+       }
+       
+     </style>
+</head>
+
+<body>
+  <div id="mainDiv">
+        <div id="boxDiv">
+            <div id="front"><img src="front.jpg" /><h1>front</h1></div>
+            <div id="back"><img src="back.jpg" /><h1>Back</h1></div>
+            <div id="left"><img src="left.jpg" /><h1>left</h1></div>
+            <div id="right"><img src="right.jpg" /><h1>right</h1></div>
+            <div id="top"><img src="up.jpg" /></div>
+            <div id="bottom"><img src="down.jpg" /></div>
+        </div>
+    </div>
+     
+     <div id="directions">Press esc and press reload</div>
+     <div id="pauseMenu"></div>
+     <div id="resumeButton">Resume</div>
+     <div id="settingsButton">Settings</div>
+     <div id="settng1">Vertical Movement</div>
+     <div id="settng2">Mouse Sensitivity</div>
+     <div id="goBackButton">🔙 / 🔄</div>
+     <div id="worldsButton">Other worlds</div>
+     <div id="world1">#1<br> <a href="file:///home/chronos/u-b4f85f8de1d33e518dae820707f65e9ef18bc886/MyFiles/Coding/Codes%202/GAMES%202.0/Humble.html">Humble</a><br/><br>#2 <a href="file:///home/chronos/u-b4f85f8de1d33e518dae820707f65e9ef18bc886/MyFiles/Coding/Codes%202/GAMES%202.0/3D%20GAME.html"><br>Ice</a><br></div>
+     <div id="mainMenu"><a href="file:///home/chronos/u-b4f85f8de1d33e518dae820707f65e9ef18bc886/MyFiles/Coding/Codes%202/Game%20of%20PAZE/Main%20menu%20and%20more/Main%20Menu.html?">Main Menu</a></div>
+
+
+     <script>
+       setTimeout(function(){ window.scrollTo(0, 0); }, 500);;
+  
+  
+  var world = document.getElementById("boxDiv")
+  var pauseMenu = document.getElementById("pauseMenu");
+  var resumeButton = document.getElementById("resumeButton");
+  var settingsButton = document.getElementById("settingsButton");
+  var settng1 = document.getElementById("settng1");
+  var settng2 = document.getElementById("settng2");
+  var goBackButton = document.getElementById("goBackButton");
+  var worldsButton = document.getElementById("worldsButton");
+  var world1 = document.getElementById("world1");
+  var directions = document.getElementById("directions");
+  var mainMenu = document.getElementById("mainMenu");
+  var x;
+  var y;
+  var isPaused = false;
+  
+  document.addEventListener('mousemove', runGame);
+  document.addEventListener('keyup', function(e){ if(e.keyCode === 27) (isPaused) ? resumeGame() : pauseGame(); });
+  resumeButton.addEventListener('click', resumeGame);
+  settingsButton.addEventListener('click', settingsButtonClicked);
+  goBackButton.addEventListener('click', goBackButtonClicked);
+  worldsButton.addEventListener('click', worldsButtonClicked);
+  
+  function pauseGame()
+  {
+      isPaused = true;
+      document.body.style.cursor = "crosshair";
+      pauseMenu.style.visibility =  "visible";
+      worldsButton.style.visibility = "visible";
+      showPauseMenu();
+  }
+  
+  function resumeGame()
+  {
+      isPaused =  false;
+      document.body.style.cursor = "none";
+      pauseMenu.style.visibility = "hidden";
+      worldsButton.style.visibility = "hidden";
+      hidePauseMenu();
+  }
+  
+  function worldsButtonClicked()
+  {
+     hidePauseMenu();
+     showWorldsMenu();
+  }
+  
+  function settingsButtonClicked()
+  {
+      hidePauseMenu();
+      showSettingsMenu();
+  }
+  
+  function goBackButtonClicked()
+  {
+      hideSettingsMenu();
+      hideWorldsMenu();
+      showPauseMenu();
+  }
+  function showPauseMenu()
+  {
+      resumeButton.style.visibility = "visible";
+      settingsButton.style.visibility = "visible";
+      goBackButton.style.visibility = "visible";
+      directions.style.visibility = "visible";
+      mainMenu.style.visibility = "visible";
+  }
+    
+  function hidePauseMenu()
+  {
+      resumeButton.style.visibility = "hidden";
+      settingsButton.style.visibility = "hidden";
+      goBackButton.style.visibility = "hidden";
+      directions.style.visibility = "hidden";
+            mainMenu.style.visibility = "hidden";
+  }
+  
+  function showSettingsMenu()
+  {
+      settng1.style.visibility = "visible";
+      settng2.style.visibility = "visible";
+      goBackButton.style.visibility = "visible";
+      worldsButton.style.visibility = "hidden";
+            mainMenu.style.visibility = "hidden";
+  }
+  
+  function hideSettingsMenu() 
+  {
+      settng1.style.visibility = "hidden";
+      settng2.style.visibility = "hidden";
+      goBackButton.style.visibility = "hidden";
+            mainMenu.style.visibility = "visible";
+  }
+  
+  function showWorldsMenu() //show other worlds
+  {
+      world1.style.visibility = "visible";
+      worldsButton.style.visibility = "hidden";
+      goBackButton.style.visibility = "visible";
+            mainMenu.style.visibility = "hidden";
+  }
+  
+  function hideWorldsMenu()
+  {
+      world1.style.visibility = "hidden";
+      goBackButton.style.visibility = "hidden";
+      worldsButton.style.visibility = "visible";
+            mainMenu.style.visibility = "visible";
+  }
+         document.addEventListener('mousemove', runGame);
+
+         function runGame(e)
+         {
+             if(!isPaused)
+             {
+            x = e.clientX;
+            y = e.clientY;
+            y = -y;
+            world.style.transform = "translateZ(600px) rotateX("+y+"deg) rotateY("+x+"deg)";
+         }
+    }
+    </script>
+        
+</body>
+</html>
